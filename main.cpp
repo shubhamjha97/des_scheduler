@@ -1,7 +1,9 @@
-#include<iostream>
+#include <iostream>
+#include "RNG.cpp"
 using namespace std;
 
 int main() {
-    cout<<"Hello World!"<<endl;
+    // Initialize the RNG
+    RNG rng = RNG("./rfile");
     return 0;
 }
