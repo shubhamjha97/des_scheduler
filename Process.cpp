@@ -1,5 +1,10 @@
-//
-// Created by Shubham Jha on 10/22/21.
-//
+class Process {
+    int AT, TC, CB, IO;
 
-#include "Process.h"
+    Process(int AT, int TC, int CB, int IO) {
+        this -> AT = AT;
+        this -> TC = TC;
+        this -> CB = CB;
+        this -> IO = IO;
+    }
+};
