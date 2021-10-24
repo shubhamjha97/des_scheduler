@@ -11,6 +11,7 @@ static vector<Process*> readProcessFile(string &processFilePath) {
     vector<Process*> processes;
     ifstream infile(processFilePath);
     string line;
+    int currentPid = 0;
 
     while(getline(infile, line)){   // read a line
         vector<int> processParams;
@@ -24,12 +25,14 @@ static vector<Process*> readProcessFile(string &processFilePath) {
         }
         processes.push_back(
                 new Process(
+                        currentPid, // TODO: Check whether pids are being allocated and incremented correctly
                         processParams[0],
                         processParams[1],
                         processParams[2],
                         processParams[3]
                 )
         );
+        currentPid++;
     }
 
     return processes;
