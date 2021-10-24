@@ -4,9 +4,9 @@
 
 using namespace std;
 
-class FcfsScheduler : BaseScheduler {
+class FcfsScheduler : public BaseScheduler {
     queue<Process*> runQueue;
-
+public:
     void addProcess(Process* process) override {
         runQueue.push(process);
     }
