@@ -8,6 +8,6 @@ Event::Event(Process *process, int timeStamp, ProcessState processState, Transit
 }
 
 bool Event::Comparator::operator()(Event *eventA, Event *eventB) {
-    // TODO: comparison code here
-    return true;
+    // TODO: comparison code here. Ensure that sorting is stable.
+    return eventA -> timeStamp > eventB -> timeStamp;
 }
