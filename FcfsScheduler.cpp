@@ -11,10 +11,13 @@ public:
         runQueue.push(process);
     }
 
+    bool testPreempt(Process* process, int currTime) override {
+        return false;
+    }
+
     Process* getNextProcess() override {
         Process* process = runQueue.front();
         runQueue.pop();
         return process;
     }
-
 };

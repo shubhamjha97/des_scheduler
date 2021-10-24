@@ -5,7 +5,7 @@
 
 class BaseScheduler {
 public:
-    bool testPreempt; // TODO: Figure out if this is needed
+    virtual bool testPreempt(Process* process, int currTime) = 0;
     virtual void addProcess(Process* process) = 0;
     virtual Process* getNextProcess() = 0;
 };
