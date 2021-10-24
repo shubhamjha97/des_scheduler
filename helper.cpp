@@ -3,7 +3,7 @@
 #include <fstream>
 #include <iostream>
 #include <sstream>
-#include "Process.cpp"
+#include "Process.h"
 
 using namespace std;
 
