@@ -8,10 +8,10 @@ enum ProcessState {CREATED, READY, RUNNING, BLOCKED};
 
 class Event {
 public:
-    Event(Process *process, int timeStamp, ProcessState processState, Transition transition);
+    Event(Process *process, int timeStamp, ProcessState processState, Transition transition, int currentTimestamp);
 
     Process *process;
-    int timeStamp;
+    int timeStamp, eventGenerationTimestamp;
     ProcessState processOldState;
     Transition transition;
 

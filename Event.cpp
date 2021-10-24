@@ -1,13 +1,17 @@
 #include "Event.h"
 
-Event::Event(Process *process, int timeStamp, ProcessState processState, Transition transition) {
+Event::Event(Process *process, int timeStamp, ProcessState processState, Transition transition, int currentTimestamp) {
     this -> process = process;
     this -> processOldState = processState;
     this -> timeStamp = timeStamp;
-    this-> transition = transition;
+    this -> transition = transition;
+    this -> eventGenerationTimestamp = currentTimestamp;
 }
 
 bool Event::Comparator::operator()(Event *eventA, Event *eventB) {
     // TODO: comparison code here. Ensure that sorting is stable.
+    if(eventA -> timeStamp == eventB -> timeStamp) {
+        return eventA -> eventGenerationTimestamp > eventB -> eventGenerationTimestamp;
+    }
     return eventA -> timeStamp > eventB -> timeStamp;
 }

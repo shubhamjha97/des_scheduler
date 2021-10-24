@@ -82,7 +82,7 @@ public:
     void makeProcessRunning(Process* process, bool processAlreadyRunning) {
         if(!processAlreadyRunning) {
             // Transition to RUNNING
-            putEvent(new Event(process, CURRENT_TIME, READY, TRANS_TO_RUN));
+            putEvent(new Event(process, CURRENT_TIME, READY, TRANS_TO_RUN, CURRENT_TIME));
         }
 
         // Transition to BLOCKED
@@ -90,7 +90,7 @@ public:
         int cpuBurstTime = min(rng->random(process->cpuBurst), process->totalCpuTime);
         process -> totalCpuTime -= cpuBurstTime; // Reduce totalCpuTime when the process runs
         if(process -> totalCpuTime > 0) { // Put the process in BLOCKED state only if it's not finished yet
-            putEvent(new Event(process, CURRENT_TIME + cpuBurstTime, RUNNING, TRANS_TO_BLOCK));
+            putEvent(new Event(process, CURRENT_TIME + cpuBurstTime, RUNNING, TRANS_TO_BLOCK, CURRENT_TIME));
         }
     }
 
@@ -98,7 +98,7 @@ public:
         if(process -> totalCpuTime > 0) {
             int ioBurstTime = rng->random(process->ioBurst);
             // Transition to READY
-            putEvent(new Event(process, CURRENT_TIME + ioBurstTime, RUNNING, TRANS_TO_READY));
+            putEvent(new Event(process, CURRENT_TIME + ioBurstTime, RUNNING, TRANS_TO_READY, CURRENT_TIME));
         }
     }
 

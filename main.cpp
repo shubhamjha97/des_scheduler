@@ -28,7 +28,7 @@ int main() {
 
     // Add the loaded processes into the DES
     for(auto process : processes) {
-        des.putEvent(new Event(process, process->arrivalTime, CREATED, TRANS_TO_READY));
+        des.putEvent(new Event(process, process->arrivalTime, CREATED, TRANS_TO_READY, 0));
     }
 
     // Run the simulation
