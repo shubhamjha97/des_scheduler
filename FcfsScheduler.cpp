@@ -1,5 +1,5 @@
-#include "BaseScheduler.cpp"
-#include "Process.cpp"
+#include "BaseScheduler.h"
+#include "Process.h"
 #include <queue>
 
 using namespace std;
