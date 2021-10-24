@@ -91,6 +91,8 @@ public:
         process -> totalCpuTime -= cpuBurstTime; // Reduce totalCpuTime when the process runs
         if(process -> totalCpuTime > 0) { // Put the process in BLOCKED state only if it's not finished yet
             putEvent(new Event(process, CURRENT_TIME + cpuBurstTime, RUNNING, TRANS_TO_BLOCK, CURRENT_TIME));
+        } else {
+            process -> finishTimestamp = CURRENT_TIME;
         }
     }
 
@@ -98,7 +100,7 @@ public:
         if(process -> totalCpuTime > 0) {
             int ioBurstTime = rng->random(process->ioBurst);
             // Transition to READY
-            putEvent(new Event(process, CURRENT_TIME + ioBurstTime, RUNNING, TRANS_TO_READY, CURRENT_TIME));
+            putEvent(new Event(process, CURRENT_TIME + ioBurstTime, BLOCKED, TRANS_TO_READY, CURRENT_TIME));
         }
     }
 
