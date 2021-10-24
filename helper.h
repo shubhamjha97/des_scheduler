@@ -1,3 +1,5 @@
+#ifndef SCHEDULER_HELPER_H
+#define SCHEDULER_HELPER_H
 #include <string>
 #include <vector>
 #include <fstream>
@@ -65,3 +67,4 @@ void dumpResultsToConsole(string schedulerName, int timeQuantum, const vector<Pr
     }
     // TODO: add summary info
 }
+#endif //SCHEDULER_HELPER_H
