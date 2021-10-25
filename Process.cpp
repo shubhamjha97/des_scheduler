@@ -11,12 +11,13 @@ Process::Process(
     this -> pid = pid;
     this -> arrivalTime = arrivalTime;
     this -> totalCpuTime = totalCpuTime;
+    this -> cpuTimeRemaining = totalCpuTime;
     this -> cpuBurst = cpuBurst;
     this -> ioBurst = ioBurst;
     this -> staticPriority = staticPriority;
     this -> dynamicPriority = dynamicPriority;
     this -> cpuWaitTime = 0;
-    this -> finishTime = 0;
+    this -> finishTimestamp = 0;
     this -> turnaroundTime = 0;
     this -> ioTime = 0;
 }

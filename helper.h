@@ -53,18 +53,33 @@ void dumpResultsToConsole(string schedulerName, int timeQuantum, const vector<Pr
     // TODO: use correct number of decimal places
     for(auto process: processes) {
         printf(
-                "%d: %d %d %d %d %d\t|\t%d %d %d %d\n",
+                "%04d: %4d %4d %4d %4d %1d | %5d %5d %5d %5d\n",
                 process->pid,
                 process->arrivalTime,
                 process->totalCpuTime,
                 process->cpuBurst,
                 process->ioBurst,
                 process->staticPriority,
-                process->finishTime,
-                process->turnaroundTime,
+                process->finishTimestamp,
+                process->finishTimestamp - process->arrivalTime,
                 process->ioTime,
                 process->cpuWaitTime);
     }
     // TODO: add summary info
+    int lastEventFinishTimestamp = INT_MIN;
+    for(auto process: processes) {
+        lastEventFinishTimestamp = max(lastEventFinishTimestamp, process -> finishTimestamp);
+    }
+    double cpuUtilization, ioUtilization;
+    double  avgTurnaroundTime, avgCpuWaitingTime, throughput;
+
+    printf("SUM: %d %.2lf %.2lf %.2lf %.2lf %.3lf\n",
+           lastEventFinishTimestamp,
+           cpuUtilization,
+           ioUtilization,
+           avgTurnaroundTime,
+           avgCpuWaitingTime,
+           throughput);
+
 }
 #endif //SCHEDULER_HELPER_H

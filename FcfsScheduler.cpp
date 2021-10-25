@@ -16,6 +16,9 @@ public:
     }
 
     Process* getNextProcess() override {
+        if(runQueue.empty()) {
+            return nullptr;
+        }
         Process* process = runQueue.front();
         runQueue.pop();
         return process;

@@ -23,7 +23,7 @@ int main() {
     DES des = DES(scheduler, rng);
 
     // Read input file
-    string PROCESS_FILE_PATH = "/Users/sjha/Downloads/lab2_assign/input1";
+    string PROCESS_FILE_PATH = "/Users/sjha/Downloads/lab2_assign/sample_input";
     vector<Process*> processes = readProcessFile(PROCESS_FILE_PATH, 4, rng); // TODO: Read maxprio from args
 
     // Add the loaded processes into the DES

@@ -2,7 +2,7 @@
 
 Event::Event(Process *process, int timeStamp, ProcessState processState, Transition transition, int currentTimestamp) {
     this -> process = process;
-    this -> processOldState = processState;
+    this -> processCurrState = processState;
     this -> timeStamp = timeStamp;
     this -> transition = transition;
     this -> eventGenerationTimestamp = currentTimestamp;

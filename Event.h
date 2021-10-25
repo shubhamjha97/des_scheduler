@@ -12,7 +12,7 @@ public:
 
     Process *process;
     int timeStamp, eventGenerationTimestamp;
-    ProcessState processOldState;
+    ProcessState processCurrState;
     Transition transition;
 
     class Comparator {

@@ -4,9 +4,10 @@
 class Process {
 public:
     int arrivalTime, totalCpuTime, cpuBurst, ioBurst;
+    int cpuTimeRemaining;
     int pid;
     int staticPriority, dynamicPriority; // TODO: initialize priority values
-    int cpuWaitTime, finishTime, turnaroundTime, ioTime;
+    int cpuWaitTime, finishTimestamp, turnaroundTime, ioTime;
 
     Process(int pid, int arrivalTime, int totalCpuTime, int cpuBurst, int ioBurst, int staticPriority, int dynamicPriority);
 };
