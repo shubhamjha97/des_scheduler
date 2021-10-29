@@ -116,6 +116,11 @@ public:
 
     void transitionToPreempt(Process* process) {
         process -> dynamicPriority--;
+
+        int processRunTime = (CURRENT_TIME - process->lastStateTimestamp);
+        process -> cpuTimeRemaining -= processRunTime;
+        process -> previousRemainingCpuBurst -= processRunTime;
+
         putEvent(new Event(process, CURRENT_TIME, RUNNING, TRANS_TO_READY, CURRENT_TIME));
     }
 
@@ -127,25 +132,21 @@ public:
         int cpuBurstTime;
         if(process -> previousRemainingCpuBurst > 0) {
             cpuBurstTime = process -> previousRemainingCpuBurst;
-            process -> previousRemainingCpuBurst = 0;
         } else {
             cpuBurstTime = rng->random(process->cpuBurst);
+            process -> previousRemainingCpuBurst = cpuBurstTime;
         }
-        cpuBurstTime = min(cpuBurstTime, process->cpuTimeRemaining);
+        process -> previousRemainingCpuBurst = min(process->previousRemainingCpuBurst, process->cpuTimeRemaining);
 
-        if(quantum < cpuBurstTime) {
-            process -> previousRemainingCpuBurst = cpuBurstTime - quantum;
-            cpuBurstTime = quantum;
-            process -> cpuTimeRemaining -= cpuBurstTime;
-            putEvent(new Event(process, CURRENT_TIME + cpuBurstTime, RUNNING, TRANS_TO_PREEMPT, CURRENT_TIME));
+        if(process->previousRemainingCpuBurst > quantum) {
+            putEvent(new Event(process, CURRENT_TIME + quantum, RUNNING, TRANS_TO_PREEMPT, CURRENT_TIME));
             return;
         }
 
-        process -> cpuTimeRemaining -= cpuBurstTime; // Reduce cpuTimeRemaining when the process runs
-        if(process -> cpuTimeRemaining > 0) { // Put the process in BLOCKED state only if it's not finished yet
-            putEvent(new Event(process, CURRENT_TIME + cpuBurstTime, RUNNING, TRANS_TO_BLOCK, CURRENT_TIME));
+        if((process->cpuTimeRemaining - process->previousRemainingCpuBurst) > 0) { // Put the process in BLOCKED state only if it's not finished yet
+            putEvent(new Event(process, CURRENT_TIME + process->previousRemainingCpuBurst, RUNNING, TRANS_TO_BLOCK, CURRENT_TIME));
         } else {
-            putEvent(new Event(process, CURRENT_TIME + cpuBurstTime, RUNNING, TRANS_TO_EXIT, CURRENT_TIME));
+            putEvent(new Event(process, CURRENT_TIME + process->previousRemainingCpuBurst, RUNNING, TRANS_TO_EXIT, CURRENT_TIME));
         }
     }
 
@@ -158,6 +159,10 @@ public:
     }
 
     void transitionToBlock(Process* process) {
+        int processRunTime = (CURRENT_TIME - process->lastStateTimestamp);
+        process -> cpuTimeRemaining -= processRunTime;
+        process -> previousRemainingCpuBurst -= processRunTime;
+
         if(process -> cpuTimeRemaining > 0) {
             int ioBurstTime = rng->random(process->ioBurst);
             // Transition to READY
