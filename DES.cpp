@@ -3,6 +3,7 @@
 #include <queue>
 #include <map>
 #include "RNG.h"
+#include <iostream>
 
 class DES {
 
