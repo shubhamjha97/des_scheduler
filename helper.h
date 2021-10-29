@@ -56,6 +56,7 @@ void dumpResultsToConsole(string schedulerName, int timeQuantum, const vector<Pr
     // TODO: Add scheduler info
     // TODO: use correct number of decimal places
 
+    cout<<schedulerName<<endl;
     int numProcess = processes.size();
     for(auto process: processes) {
         printf(
