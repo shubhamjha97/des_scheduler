@@ -68,10 +68,8 @@ public:
                     CALL_SCHEDULER = true;
                     break;
                 case TRANS_TO_RUN:
-                    if(event -> processCurrState == READY) {
-                        proc -> cpuWaitTime += timeInPrevState;
-                    }
-                    transitionToRunning(proc, true); // create event for either preemption or blocking
+                    proc -> cpuWaitTime += timeInPrevState;
+                    CALL_SCHEDULER = transitionToRunning(proc); // create event for either preemption or blocking
                     break;
                 case TRANS_TO_BLOCK:
                     transitionToBlock(proc);
@@ -107,16 +105,19 @@ public:
         scheduler->addProcess(process); // add to run queue
     }
 
-    void transitionToRunning(Process* process, bool processAlreadyRunning) {
+    bool transitionToRunning(Process* process) {
         // Transition to RUNNING
         int cpuBurstTime = min(rng->random(process->cpuBurst), process->cpuTimeRemaining);
         process -> cpuTimeRemaining -= cpuBurstTime; // Reduce cpuTimeRemaining when the process runs
         if(process -> cpuTimeRemaining > 0) { // Put the process in BLOCKED state only if it's not finished yet
             putEvent(new Event(process, CURRENT_TIME + cpuBurstTime, RUNNING, TRANS_TO_BLOCK, CURRENT_TIME));
+            return false;
         } else {
             process -> finishTimestamp = CURRENT_TIME + cpuBurstTime;
             CURRENT_RUNNING_PROCESS = nullptr;
             cout<<process->finishTimestamp<<" "<<process->pid<<" Done"<<endl;
+            CURRENT_TIME = CURRENT_TIME + cpuBurstTime;
+            return true;
         }
     }
 

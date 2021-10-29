@@ -32,7 +32,7 @@ static vector<Process*> readProcessFile(string &processFilePath, int maxPriority
             break;
         }
 
-        int staticPriority = rng -> random(MAX_PRIO); // TODO: ensure random numbers are generated in the correct range
+        int staticPriority = rng -> random(MAX_PRIO);
         int dynamicPriority = staticPriority - 1; // TODO: Check if this is correct
 
         processes.push_back(
