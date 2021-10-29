@@ -55,9 +55,9 @@ static BaseScheduler* getScheduler(char schedSelector, int quantum, int maxPrio)
             return new FcfsScheduler(DEFAULT_QUANTUM, DEFAULT_MAXPRIO);
         case 'L':
             return new LcfsScheduler(DEFAULT_QUANTUM, DEFAULT_MAXPRIO);
-//        case 'S': // TODO: Uncomment
-//            return new SrtfScheduler(DEFAULT_QUANTUM, maxPrio);
-//        case 'R':
+        case 'S':
+            return new SrtfScheduler(DEFAULT_QUANTUM, maxPrio);
+//        case 'R': // TODO: Uncomment
 //            return new RrScheduler(quantum, maxPrio);
 //        case 'P':
 //            return new PreScheduler(quantum, maxPrio);
