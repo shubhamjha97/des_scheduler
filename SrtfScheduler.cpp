@@ -31,7 +31,7 @@ bool SrtfScheduler::Comparator::operator()(Process *processA, Process *processB)
         if(processA->lastStateTimestamp == processB->lastStateTimestamp) {
             return processA -> pid > processB -> pid;
         }
-        return processA->lastStateTimestamp > processB->lastStateTimestamp; // TODO: check for stability
+        return processA->lastStateTimestamp > processB->lastStateTimestamp;
     }
     return processA->cpuTimeRemaining > processB->cpuTimeRemaining;
 }

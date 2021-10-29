@@ -20,7 +20,6 @@ private:
 
     int CURRENT_TIME, quantum;
     bool vflag;
-    vector<pair<int, int>> ioTimes; // Stores (start, end) of all io events
     DesPriorityQueue<Event*> DesQueue;
     BaseScheduler* scheduler;
     RNG* rng;

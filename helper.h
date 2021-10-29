@@ -18,8 +18,6 @@
 
 using namespace std;
 
-enum Schedulers {FCFS, LCFS, SRTF, RR, PRIO, PREPRIO}; // TODO: Maybe remove
-
 int DEFAULT_QUANTUM = 10000;
 int DEFAULT_MAXPRIO = 4;
 
@@ -59,9 +57,9 @@ static BaseScheduler* getScheduler(char schedSelector, int quantum, int maxPrio)
             return new SrtfScheduler(DEFAULT_QUANTUM, maxPrio);
         case 'R':
             return new RrScheduler(quantum, maxPrio);
-        case 'P': // TODO: Uncomment
+        case 'P':
             return new PrioScheduler(quantum, maxPrio);
-//        case 'E':
+//        case 'E': // TODO: Uncomment
 //            return new PrePrioScheduler(quantum, maxPrio);
     }
 }
@@ -89,7 +87,7 @@ static vector<Process*> readProcessFile(string &processFilePath, int maxPriority
         }
 
         int staticPriority = rng -> random(MAX_PRIO);
-        int dynamicPriority = staticPriority - 1; // TODO: Check if this is correct
+        int dynamicPriority = staticPriority - 1;
 
         processes.push_back(
                 new Process(

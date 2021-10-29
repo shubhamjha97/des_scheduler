@@ -6,7 +6,7 @@ public:
     int arrivalTime, totalCpuTime, cpuBurst, ioBurst;
     int cpuTimeRemaining, previousRemainingCpuBurst;
     int pid;
-    int staticPriority, dynamicPriority; // TODO: initialize priority values
+    int staticPriority, dynamicPriority;
     int cpuWaitTime, finishTimestamp, ioTime;
     int lastStateTimestamp;
 
