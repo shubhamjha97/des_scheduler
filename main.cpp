@@ -9,22 +9,22 @@ using namespace std;
 
 int main(int argc, char **argv) {
     int c;
-    bool vflag, tflag, eflag, pflag; // Throw away these flags
+    bool vflag=false, tflag=false, eflag=false, pflag=false; // Throw away these flags for now
     string schedSpec;
 
     while ((c = getopt (argc, argv, "vteps:")) != -1) {
         switch (c) {
             case 'v':
-                vflag = 1;
+                vflag = true;
                 break;
             case 't':
-                tflag = 1;
+                tflag = true;
                 break;
             case 'e':
-                eflag = 1;
+                eflag = true;
                 break;
             case 'p':
-                pflag = 1;
+                pflag = true;
                 break;
             case 's':
                 schedSpec = optarg;
@@ -47,7 +47,7 @@ int main(int argc, char **argv) {
     BaseScheduler *scheduler = getScheduler(schedSpec[0], quantum, maxPrio);
 
     // Initialize the Discrete Event Simulator
-    DES des = DES(scheduler, rng, quantum);
+    DES des = DES(scheduler, rng, quantum, vflag);
 
     // Read input file
     vector<Process*> processes = readProcessFile(PROCESS_FILE_PATH, maxPrio, rng);

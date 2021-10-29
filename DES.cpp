@@ -2,7 +2,7 @@
 #include "BaseScheduler.h"
 #include <queue>
 #include <map>
-#include "RNG.h" // TODO: Move RNG class to its header file
+#include "RNG.h"
 
 class DES {
 
@@ -19,6 +19,7 @@ private:
     };
 
     int CURRENT_TIME, quantum;
+    bool vflag;
     DesPriorityQueue<Event*> DesQueue;
     BaseScheduler* scheduler;
     RNG* rng;
@@ -39,10 +40,11 @@ public:
         {BLOCKED, "BLOCK"},
     };
 
-    DES(BaseScheduler* scheduler, RNG* rng, int quantum) {
+    DES(BaseScheduler* scheduler, RNG* rng, int quantum, bool vflag) {
         this -> scheduler = scheduler;
         this -> rng = rng;
         this -> quantum = quantum;
+        this -> vflag = vflag;
         CURRENT_TIME = 0;
         CURRENT_RUNNING_PROCESS = nullptr;
     }
@@ -57,7 +59,7 @@ public:
             CURRENT_TIME = event -> timeStamp;
             timeInPrevState = CURRENT_TIME - proc->lastStateTimestamp;
 
-            if(event -> transition != TRANS_TO_PREEMPT) {
+            if(vflag && event -> transition != TRANS_TO_PREEMPT) {
                 printf("%d %d %d: %s -> %s\n", CURRENT_TIME, proc->pid, timeInPrevState,
                        DEBUG_STATE_MAP[event->processCurrState].c_str(),
                        DEBUG_TRANSITION_MAP[event->transition].c_str());
@@ -149,7 +151,9 @@ public:
     void transitionToExit(Process* process) {
         process -> finishTimestamp = CURRENT_TIME;
         CURRENT_RUNNING_PROCESS = nullptr;
-        cout<<process->finishTimestamp<<" "<<process->pid<<" Done"<<endl;
+        if(vflag) {
+            cout << process->finishTimestamp << " " << process->pid << " Done" << endl;
+        }
     }
 
     void transitionToBlock(Process* process) {
