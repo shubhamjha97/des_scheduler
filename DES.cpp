@@ -20,6 +20,7 @@ private:
 
     int CURRENT_TIME, quantum;
     bool vflag;
+    vector<pair<int, int>> ioTimes; // Stores (start, end) of all io events
     DesPriorityQueue<Event*> DesQueue;
     BaseScheduler* scheduler;
     RNG* rng;
@@ -49,7 +50,7 @@ public:
         CURRENT_RUNNING_PROCESS = nullptr;
     }
 
-    void runSimulation() {
+    void runSimulation(vector<pair<int, int>> &ioTimes) {
         Event* event;
         int timeInPrevState;
         bool CALL_SCHEDULER = false;
@@ -71,6 +72,7 @@ public:
                     if(event -> processCurrState == BLOCKED) {
                         proc -> ioTime += timeInPrevState;
                         proc -> dynamicPriority = (proc -> staticPriority - 1);
+                        ioTimes.push_back(make_pair(proc->lastStateTimestamp, CURRENT_TIME));
                     }
                     transitionToReady(proc);
                     CALL_SCHEDULER = true;

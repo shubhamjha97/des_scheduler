@@ -46,6 +46,7 @@ int main(int argc, char **argv) {
     // Get the scheduler depending on the schedSpec
     BaseScheduler *scheduler = getScheduler(schedSpec[0], quantum, maxPrio);
 
+    vector<pair<int, int>> ioTimes;
     // Initialize the Discrete Event Simulator
     DES des = DES(scheduler, rng, quantum, vflag);
 
@@ -58,9 +59,9 @@ int main(int argc, char **argv) {
     }
 
     // Run the simulation
-    des.runSimulation();
+    des.runSimulation(ioTimes);
 
-    dumpResultsToConsole(scheduler->getSchedulerName(), quantum, processes);
+    dumpResultsToConsole(scheduler->getSchedulerName(), quantum, processes, ioTimes);
 
     return 0;
 }

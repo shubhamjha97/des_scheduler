@@ -108,7 +108,28 @@ static vector<Process*> readProcessFile(string &processFilePath, int maxPriority
     return processes;
 }
 
-void dumpResultsToConsole(string schedulerName, int timeQuantum, const vector<Process*>& processes) {
+int processIoTimes(vector<pair<int, int>> &ioTimes) {
+    if(ioTimes.empty()) {
+        return 0;
+    }
+    int result = 0, n = ioTimes.size();
+    sort(ioTimes.begin(), ioTimes.end());
+    int begin = ioTimes[0].first, end = ioTimes[0].second;
+    for(int i=1; i<n; i++) {
+        if(ioTimes[i].first > end) {
+            result += (end - begin);
+            begin = ioTimes[i].first;
+        }
+
+        if(ioTimes[i].second > end) {
+            end = ioTimes[i].second;
+        }
+    }
+    result += (end - begin);
+    return result;
+}
+
+void dumpResultsToConsole(string schedulerName, int timeQuantum, const vector<Process*>& processes, vector<pair<int, int>> &ioTimes) {
     cout<<schedulerName;
     if(schedulerName=="RR" || schedulerName=="PRIO" || schedulerName=="PREPRIO") {
         cout<<" "<<timeQuantum;
@@ -139,8 +160,8 @@ void dumpResultsToConsole(string schedulerName, int timeQuantum, const vector<Pr
         avgCpuWaitingTime += process->cpuWaitTime;
         avgTurnaroundTime += (process->finishTimestamp - process->arrivalTime);
         timeCpuBusy += process->totalCpuTime;
-        timeIoBusy += process->ioTime; // TODO: Fix calculation
     }
+    timeIoBusy = processIoTimes(ioTimes);
     avgCpuWaitingTime /= numProcess;
     avgTurnaroundTime /= numProcess;
 
