@@ -19,5 +19,5 @@ Process::Process(
     this -> cpuWaitTime = 0;
     this -> finishTimestamp = 0;
     this -> ioTime = 0;
-    this -> lastStateTimestamp = 0;
+    this -> lastStateTimestamp = arrivalTime;
 }
