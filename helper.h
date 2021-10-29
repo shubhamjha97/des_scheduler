@@ -14,7 +14,7 @@
 #include "SrtfScheduler.h"
 #include "RrScheduler.h"
 #include "PrioScheduler.h"
-//#include "PrePrioScheduler.h"
+#include "PrePrioScheduler.h"
 
 using namespace std;
 
@@ -59,8 +59,8 @@ static BaseScheduler* getScheduler(char schedSelector, int quantum, int maxPrio)
             return new RrScheduler(quantum, maxPrio);
         case 'P':
             return new PrioScheduler(quantum, maxPrio);
-//        case 'E': // TODO: Uncomment
-//            return new PrePrioScheduler(quantum, maxPrio);
+        case 'E':
+            return new PrePrioScheduler(quantum, maxPrio);
     }
 }
 
