@@ -74,7 +74,21 @@ public:
                         proc -> dynamicPriority = (proc -> staticPriority - 1);
                         ioTimes.push_back(make_pair(proc->lastStateTimestamp, CURRENT_TIME));
                     }
+
                     transitionToReady(proc);
+
+                    if(CURRENT_RUNNING_PROCESS && scheduler->testPreempt(CURRENT_RUNNING_PROCESS, CURRENT_TIME)
+                        && proc->dynamicPriority > CURRENT_RUNNING_PROCESS->dynamicPriority
+                        && blockPreemptExitMap[CURRENT_RUNNING_PROCESS->pid]->timeStamp > CURRENT_TIME) {
+                        // Delete any pending event from DesQueue
+                        DesQueue.remove(blockPreemptExitMap[CURRENT_RUNNING_PROCESS->pid]);
+
+                        // Transition current process to PREEMPT
+                        Event *event = new Event(CURRENT_RUNNING_PROCESS, CURRENT_TIME, RUNNING, TRANS_TO_PREEMPT, CURRENT_TIME);
+                        putEvent(event);
+                        blockPreemptExitMap[CURRENT_RUNNING_PROCESS->pid] = event;
+                    }
+
                     CALL_SCHEDULER = true;
                     break;
                 case TRANS_TO_RUN:
