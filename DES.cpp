@@ -20,6 +20,7 @@ private:
 
     int CURRENT_TIME, quantum;
     bool vflag;
+    map<int, Event*> blockPreemptExitMap;
     DesPriorityQueue<Event*> DesQueue;
     BaseScheduler* scheduler;
     RNG* rng;
@@ -139,14 +140,20 @@ public:
         process -> previousRemainingCpuBurst = min(process->previousRemainingCpuBurst, process->cpuTimeRemaining);
 
         if(process->previousRemainingCpuBurst > quantum) {
-            putEvent(new Event(process, CURRENT_TIME + quantum, RUNNING, TRANS_TO_PREEMPT, CURRENT_TIME));
+            Event *event = new Event(process, CURRENT_TIME + quantum, RUNNING, TRANS_TO_PREEMPT, CURRENT_TIME);
+            putEvent(event);
+            blockPreemptExitMap[process->pid] = event;
             return;
         }
 
         if((process->cpuTimeRemaining - process->previousRemainingCpuBurst) > 0) { // Put the process in BLOCKED state only if it's not finished yet
-            putEvent(new Event(process, CURRENT_TIME + process->previousRemainingCpuBurst, RUNNING, TRANS_TO_BLOCK, CURRENT_TIME));
+            Event *event = new Event(process, CURRENT_TIME + process->previousRemainingCpuBurst, RUNNING, TRANS_TO_BLOCK, CURRENT_TIME);
+            putEvent(event);
+            blockPreemptExitMap[process->pid] = event;
         } else {
-            putEvent(new Event(process, CURRENT_TIME + process->previousRemainingCpuBurst, RUNNING, TRANS_TO_EXIT, CURRENT_TIME));
+            Event *event = new Event(process, CURRENT_TIME + process->previousRemainingCpuBurst, RUNNING, TRANS_TO_EXIT, CURRENT_TIME);
+            putEvent(event);
+            blockPreemptExitMap[process->pid] = event;
         }
     }
 
