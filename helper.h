@@ -55,6 +55,8 @@ static vector<Process*> readProcessFile(string &processFilePath, int maxPriority
 void dumpResultsToConsole(string schedulerName, int timeQuantum, const vector<Process*>& processes) {
     // TODO: Add scheduler info
     // TODO: use correct number of decimal places
+
+    int numProcess = processes.size();
     for(auto process: processes) {
         printf(
                 "%04d: %4d %4d %4d %4d %1d | %5d %5d %5d %5d\n",
@@ -70,12 +72,25 @@ void dumpResultsToConsole(string schedulerName, int timeQuantum, const vector<Pr
                 process->cpuWaitTime);
     }
     // TODO: add summary info
-    int lastEventFinishTimestamp = INT_MIN;
+    int lastEventFinishTimestamp = INT_MIN, timeCpuBusy = 0, timeIoBusy = 0;
+    double cpuUtilization, ioUtilization;
+    double  avgTurnaroundTime=0.0, avgCpuWaitingTime=0.0, throughput=0.0;
+
     for(auto process: processes) {
         lastEventFinishTimestamp = max(lastEventFinishTimestamp, process -> finishTimestamp);
+        avgCpuWaitingTime += process->cpuWaitTime;
+        avgTurnaroundTime += (process->finishTimestamp - process->arrivalTime);
+        timeCpuBusy += process->totalCpuTime;
+        timeIoBusy += process->ioTime;
     }
-    double cpuUtilization, ioUtilization;
-    double  avgTurnaroundTime, avgCpuWaitingTime, throughput;
+    avgCpuWaitingTime /= numProcess;
+    avgTurnaroundTime /= numProcess;
+
+    throughput = 100.0 * numProcess / (double) lastEventFinishTimestamp;
+
+    cout<<"timeCPUBusy: "<<timeCpuBusy<<" totalIOTime: "<<timeIoBusy<<" lastEventFinish: "<<lastEventFinishTimestamp<<endl; // TODO: remove
+    cpuUtilization = 100.0 * (timeCpuBusy / (double) lastEventFinishTimestamp);
+    ioUtilization = 100.0 * (timeIoBusy / (double) lastEventFinishTimestamp);
 
     printf("SUM: %d %.2lf %.2lf %.2lf %.2lf %.3lf\n",
            lastEventFinishTimestamp,

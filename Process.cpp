@@ -18,6 +18,6 @@ Process::Process(
     this -> dynamicPriority = dynamicPriority;
     this -> cpuWaitTime = 0;
     this -> finishTimestamp = 0;
-    this -> turnaroundTime = 0;
     this -> ioTime = 0;
+    this -> lastStateTimestamp = 0;
 }

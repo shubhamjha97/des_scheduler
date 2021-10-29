@@ -34,23 +34,28 @@ public:
 
     void runSimulation() {
         Event* event;
-//        int timeInPrevState;
+        int timeInPrevState;
         bool CALL_SCHEDULER = false;
-
 
         while( (event = getEvent()) ) {
             Process *proc = event -> process;
             CURRENT_TIME = event -> timeStamp;
-//            timeInPrevState = CURRENT_TIME – proc->state_ts; // TODO: Useful for accounting
+            timeInPrevState = CURRENT_TIME - proc->lastStateTimestamp;
 
-            cout<<CURRENT_TIME<<" "<<event->process->pid<<" "<<event->processCurrState<<" "<<event->transition<<" "<<event->process->cpuTimeRemaining<<endl;
+            cout<<CURRENT_TIME<<" "<<event->process->pid<<" "<<event->processCurrState<<" "<<event->transition<<" "<<event->process->cpuTimeRemaining<<endl; // TODO: remove
             switch(event -> transition) {
                 case TRANS_TO_READY:
                     // must come from BLOCKED or from PREEMPTION
-                    scheduler->addProcess(proc); // add to run queue
+                    if(event -> processCurrState == BLOCKED) {
+                        proc -> ioTime += timeInPrevState;
+                    }
+                    transitionToReady(proc);
                     CALL_SCHEDULER = (CURRENT_RUNNING_PROCESS==nullptr); // TODO: conditional on whether something is run?
                     break;
                 case TRANS_TO_RUN:
+                    if(event -> processCurrState == READY) {
+                        proc -> cpuWaitTime += timeInPrevState;
+                    }
                     transitionToRunning(proc, true); // create event for either preemption or blocking
                     break;
                 case TRANS_TO_BLOCK:
@@ -63,6 +68,7 @@ public:
                     // TODO: Make current_running_process null
                     break;
             }
+            proc->lastStateTimestamp = CURRENT_TIME;
             delete event; event = nullptr; // remove current event object from Memory
 
             if(CALL_SCHEDULER) {
@@ -83,6 +89,10 @@ public:
 
             }
         }
+    }
+
+    void transitionToReady(Process* process) {
+        scheduler->addProcess(process); // add to run queue
     }
 
     void transitionToRunning(Process* process, bool processAlreadyRunning) {

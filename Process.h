@@ -7,7 +7,8 @@ public:
     int cpuTimeRemaining;
     int pid;
     int staticPriority, dynamicPriority; // TODO: initialize priority values
-    int cpuWaitTime, finishTimestamp, turnaroundTime, ioTime;
+    int cpuWaitTime, finishTimestamp, ioTime;
+    int lastStateTimestamp;
 
     Process(int pid, int arrivalTime, int totalCpuTime, int cpuBurst, int ioBurst, int staticPriority, int dynamicPriority);
 };
