@@ -52,10 +52,10 @@ int parseForMaxPrio(string schedSpec) {
 static BaseScheduler* getScheduler(char schedSelector, int quantum, int maxPrio) {
     switch(schedSelector) {
         case 'F':
-            return new FcfsScheduler(DEFAULT_QUANTUM, maxPrio);
-//        case 'L': // TODO: Uncomment
-//            return new LcfsScheduler(DEFAULT_QUANTUM, maxPrio);
-//        case 'S':
+            return new FcfsScheduler(DEFAULT_QUANTUM, DEFAULT_MAXPRIO);
+        case 'L':
+            return new LcfsScheduler(DEFAULT_QUANTUM, DEFAULT_MAXPRIO);
+//        case 'S': // TODO: Uncomment
 //            return new SrtfScheduler(DEFAULT_QUANTUM, maxPrio);
 //        case 'R':
 //            return new RrScheduler(quantum, maxPrio);
@@ -126,7 +126,6 @@ void dumpResultsToConsole(string schedulerName, int timeQuantum, const vector<Pr
                 process->ioTime,
                 process->cpuWaitTime);
     }
-    // TODO: add summary info
     int lastEventFinishTimestamp = INT_MIN, timeCpuBusy = 0, timeIoBusy = 0;
     double cpuUtilization, ioUtilization;
     double  avgTurnaroundTime=0.0, avgCpuWaitingTime=0.0, throughput=0.0;
