@@ -13,7 +13,7 @@
 #include "LcfsScheduler.h"
 #include "SrtfScheduler.h"
 #include "RrScheduler.h"
-#include "PreScheduler.h"
+#include "PrioScheduler.h"
 #include "PrePrioScheduler.h"
 
 using namespace std;
@@ -59,8 +59,8 @@ static BaseScheduler* getScheduler(char schedSelector, int quantum, int maxPrio)
             return new SrtfScheduler(DEFAULT_QUANTUM, maxPrio);
         case 'R':
             return new RrScheduler(quantum, maxPrio);
-//        case 'P': // TODO: Uncomment
-//            return new PreScheduler(quantum, maxPrio);
+        case 'P': // TODO: Uncomment
+            return new PrioScheduler(quantum, maxPrio);
 //        case 'E':
 //            return new PrePrioScheduler(quantum, maxPrio);
     }
@@ -109,8 +109,6 @@ static vector<Process*> readProcessFile(string &processFilePath, int maxPriority
 }
 
 void dumpResultsToConsole(string schedulerName, int timeQuantum, const vector<Process*>& processes) {
-    // TODO: output time quantum?
-
     cout<<schedulerName;
     if(schedulerName=="RR" || schedulerName=="PRIO" || schedulerName=="PREPRIO") {
         cout<<" "<<timeQuantum;

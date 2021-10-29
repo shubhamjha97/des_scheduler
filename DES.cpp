@@ -83,7 +83,6 @@ public:
                     CALL_SCHEDULER = true;
                     break;
                 case TRANS_TO_PREEMPT:
-                    // TODO: add to runqueue (no event is generated)
                     transitionToPreempt(proc);
                     CURRENT_RUNNING_PROCESS = nullptr;
                     CALL_SCHEDULER = true;
@@ -113,6 +112,7 @@ public:
     }
 
     void transitionToPreempt(Process* process) {
+        process -> dynamicPriority--;
         putEvent(new Event(process, CURRENT_TIME, RUNNING, TRANS_TO_READY, CURRENT_TIME));
     }
 
