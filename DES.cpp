@@ -1,6 +1,7 @@
 #include "Event.h"
 #include "BaseScheduler.h"
 #include <queue>
+#include <map>
 #include "RNG.h" // TODO: Move RNG class to its header file
 
 class DES {
@@ -25,6 +26,19 @@ private:
     Process* CURRENT_RUNNING_PROCESS;
 
 public:
+    map<Transition, string> DEBUG_TRANSITION_MAP{
+        {TRANS_TO_READY, "READY"},
+        {TRANS_TO_RUN, "RUNNG"},
+        {TRANS_TO_BLOCK, "BLOCK"},
+        {TRANS_TO_PREEMPT, "READY"}
+    };
+    map<ProcessState, string> DEBUG_STATE_MAP{
+        {CREATED, "CREATED"},
+        {READY, "READY"},
+        {RUNNING, "RUNNG"},
+        {BLOCKED, "BLOCK"}
+    };
+
     DES(BaseScheduler* scheduler, RNG* rng) {
         this -> scheduler = scheduler;
         this -> rng = rng;
@@ -42,7 +56,7 @@ public:
             CURRENT_TIME = event -> timeStamp;
             timeInPrevState = CURRENT_TIME - proc->lastStateTimestamp;
 
-            cout<<CURRENT_TIME<<" "<<event->process->pid<<" "<<event->processCurrState<<" "<<event->transition<<" "<<event->process->cpuTimeRemaining<<endl; // TODO: remove
+            printf("%d %d %d: %s -> %s\n", CURRENT_TIME, proc->pid, timeInPrevState, DEBUG_STATE_MAP[event->processCurrState].c_str(), DEBUG_TRANSITION_MAP[event->transition].c_str());
             switch(event -> transition) {
                 case TRANS_TO_READY:
                     // must come from BLOCKED or from PREEMPTION
@@ -103,8 +117,9 @@ public:
         if(process -> cpuTimeRemaining > 0) { // Put the process in BLOCKED state only if it's not finished yet
             putEvent(new Event(process, CURRENT_TIME + cpuBurstTime, RUNNING, TRANS_TO_BLOCK, CURRENT_TIME));
         } else {
-            process -> finishTimestamp = CURRENT_TIME + cpuBurstTime; // TODO: currentTime + cpuBurstTime
+            process -> finishTimestamp = CURRENT_TIME + cpuBurstTime;
             CURRENT_RUNNING_PROCESS = nullptr;
+            cout<<process->finishTimestamp<<" "<<process->pid<<" Done"<<endl;
         }
     }
 
