@@ -37,7 +37,7 @@ static vector<Process*> readProcessFile(string &processFilePath, int maxPriority
 
         processes.push_back(
                 new Process(
-                        currentPid, // TODO: Check whether pids are being allocated and incremented correctly
+                        currentPid,
                         processParams[0],
                         processParams[1],
                         processParams[2],
@@ -81,14 +81,13 @@ void dumpResultsToConsole(string schedulerName, int timeQuantum, const vector<Pr
         avgCpuWaitingTime += process->cpuWaitTime;
         avgTurnaroundTime += (process->finishTimestamp - process->arrivalTime);
         timeCpuBusy += process->totalCpuTime;
-        timeIoBusy += process->ioTime;
+        timeIoBusy += process->ioTime; // TODO: Fix calculation
     }
     avgCpuWaitingTime /= numProcess;
     avgTurnaroundTime /= numProcess;
 
     throughput = 100.0 * numProcess / (double) lastEventFinishTimestamp;
 
-    cout<<"timeCPUBusy: "<<timeCpuBusy<<" totalIOTime: "<<timeIoBusy<<" lastEventFinish: "<<lastEventFinishTimestamp<<endl; // TODO: remove
     cpuUtilization = 100.0 * (timeCpuBusy / (double) lastEventFinishTimestamp);
     ioUtilization = 100.0 * (timeIoBusy / (double) lastEventFinishTimestamp);
 

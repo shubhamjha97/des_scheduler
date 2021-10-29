@@ -64,7 +64,7 @@ public:
                         proc -> ioTime += timeInPrevState;
                     }
                     transitionToReady(proc);
-                    CALL_SCHEDULER = (CURRENT_RUNNING_PROCESS==nullptr); // TODO: conditional on whether something is run?
+                    CALL_SCHEDULER = true;
                     break;
                 case TRANS_TO_RUN:
                     if(event -> processCurrState == READY) {
@@ -74,33 +74,30 @@ public:
                     break;
                 case TRANS_TO_BLOCK:
                     transitionToBlock(proc);
+                    CURRENT_RUNNING_PROCESS = nullptr;
                     CALL_SCHEDULER = true;
                     break;
                 case TRANS_TO_PREEMPT:
                     // TODO: add to runqueue (no event is generated)
-                    CALL_SCHEDULER = true;
                     // TODO: Make current_running_process null
+                    CALL_SCHEDULER = true;
                     break;
             }
             proc->lastStateTimestamp = CURRENT_TIME;
             delete event; event = nullptr; // remove current event object from Memory
 
-            if(CALL_SCHEDULER) {
-                if (getNextEventTime() == CURRENT_TIME)
-                    continue; //process next event from Event queue
-
-                // This flag is true whenever we want to get a new process from the scheduler
+            if(CALL_SCHEDULER) { // This flag is true whenever we want to get a new process from the scheduler
+                if (getNextEventTime() == CURRENT_TIME) {
+                    continue; // process all events at the same time before scheduling
+                }
                 CALL_SCHEDULER = false; // reset global flag
-//                CURRENT_RUNNING_PROCESS = nullptr; // TODO: Check
                 if (CURRENT_RUNNING_PROCESS == nullptr) {
                     CURRENT_RUNNING_PROCESS = scheduler->getNextProcess();
                     if (CURRENT_RUNNING_PROCESS == nullptr)
                         continue;
+                    // create event to make process runnable for same time.
                     putEvent(new Event(CURRENT_RUNNING_PROCESS, CURRENT_TIME, READY, TRANS_TO_RUN, CURRENT_TIME));
-
-                    // TODO: create event to make this process runnable for same time.
                 }
-
             }
         }
     }
@@ -110,8 +107,7 @@ public:
     }
 
     void transitionToRunning(Process* process, bool processAlreadyRunning) {
-        // Transition to BLOCKED
-        // TODO: make sure random number is generated in the correct range
+        // Transition to RUNNING
         int cpuBurstTime = min(rng->random(process->cpuBurst), process->cpuTimeRemaining);
         process -> cpuTimeRemaining -= cpuBurstTime; // Reduce cpuTimeRemaining when the process runs
         if(process -> cpuTimeRemaining > 0) { // Put the process in BLOCKED state only if it's not finished yet
@@ -129,7 +125,6 @@ public:
             // Transition to READY
             putEvent(new Event(process, CURRENT_TIME + ioBurstTime, BLOCKED, TRANS_TO_READY, CURRENT_TIME));
         }
-        CURRENT_RUNNING_PROCESS = nullptr;
     }
 
     Event* getEvent() {
@@ -155,6 +150,6 @@ public:
 
     void removeEvent(Event *event) {
         DesQueue.remove(event);
-        // TODO: maybe delete event object
+        delete event;
     }
 };
