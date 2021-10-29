@@ -130,12 +130,8 @@ public:
     }
 
     void transitionToRunning(Process* process) {
-        int cpuBurstTime;
-        if(process -> previousRemainingCpuBurst > 0) {
-            cpuBurstTime = process -> previousRemainingCpuBurst;
-        } else {
-            cpuBurstTime = rng->random(process->cpuBurst);
-            process -> previousRemainingCpuBurst = cpuBurstTime;
+        if(process -> previousRemainingCpuBurst == 0) {
+            process -> previousRemainingCpuBurst = rng->random(process->cpuBurst);
         }
         process -> previousRemainingCpuBurst = min(process->previousRemainingCpuBurst, process->cpuTimeRemaining);
 
