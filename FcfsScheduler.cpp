@@ -1,26 +1,27 @@
-#include "BaseScheduler.h"
+#include "FcfsScheduler.h"
 #include "Process.h"
-#include <queue>
 
 using namespace std;
 
-class FcfsScheduler : public BaseScheduler {
-    queue<Process*> runQueue;
-public:
-    void addProcess(Process* process) override {
-        runQueue.push(process);
-    }
+void FcfsScheduler::addProcess(Process* process) {
+    runQueue.push(process);
+}
 
-    bool testPreempt(Process* process, int currTime) override {
-        return false;
-    }
+bool FcfsScheduler::testPreempt(Process* process, int currTime) {
+    return false;
+}
 
-    Process* getNextProcess() override {
-        if(runQueue.empty()) {
-            return nullptr;
-        }
-        Process* process = runQueue.front();
-        runQueue.pop();
-        return process;
+Process* FcfsScheduler::getNextProcess() {
+    if(runQueue.empty()) {
+        return nullptr;
     }
-};
+    Process* process = runQueue.front();
+    runQueue.pop();
+    return process;
+}
+
+string FcfsScheduler::getSchedulerName() {
+    return "FCFS";
+}
+
+FcfsScheduler::FcfsScheduler(int quantum, int maxPrio) : BaseScheduler(quantum, maxPrio) {}
