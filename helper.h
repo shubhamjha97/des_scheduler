@@ -2,10 +2,13 @@
 #define SCHEDULER_HELPER_H
 
 #include <string>
+#include <string.h>
 #include <vector>
 #include <fstream>
 #include <iostream>
 #include <sstream>
+#include <algorithm>
+#include <climits>
 #include "Process.h"
 #include "RNG.h"
 #include "BaseScheduler.h"
