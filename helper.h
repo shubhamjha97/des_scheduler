@@ -16,14 +16,18 @@ static vector<Process*> readProcessFile(string &processFilePath, int maxPriority
     string line;
     int currentPid = 0;
     int MAX_PRIO = maxPriority;
+    const char* delimiters = " \t\n";
 
     while(getline(infile, line)){   // read a line
         vector<int> processParams;
         stringstream ss(line);
 
-        while(getline(ss, line, ' ')) { // split on spaces
-            processParams.push_back(stoi(line));
+        char* token = strtok(&line[0], delimiters);
+        while (token != NULL) {
+            processParams.push_back(stoi((string)token));
+            token = strtok (NULL, delimiters);
         }
+
         if(processParams.size() != 4) {
             break;
         }
