@@ -3,7 +3,7 @@
 
 #include "Process.h"
 
-enum Transition {TRANS_TO_READY, TRANS_TO_RUN, TRANS_TO_BLOCK, TRANS_TO_PREEMPT};
+enum Transition {TRANS_TO_READY, TRANS_TO_RUN, TRANS_TO_BLOCK, TRANS_TO_PREEMPT, TRANS_TO_EXIT};
 enum ProcessState {CREATED, READY, RUNNING, BLOCKED};
 
 class Event {

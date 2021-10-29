@@ -30,13 +30,14 @@ public:
         {TRANS_TO_READY, "READY"},
         {TRANS_TO_RUN, "RUNNG"},
         {TRANS_TO_BLOCK, "BLOCK"},
-        {TRANS_TO_PREEMPT, "READY"}
+        {TRANS_TO_PREEMPT, "READY"},
+        {TRANS_TO_EXIT, "EXIT"},
     };
     map<ProcessState, string> DEBUG_STATE_MAP{
         {CREATED, "CREATED"},
         {READY, "READY"},
         {RUNNING, "RUNNG"},
-        {BLOCKED, "BLOCK"}
+        {BLOCKED, "BLOCK"},
     };
 
     DES(BaseScheduler* scheduler, RNG* rng) {
@@ -69,7 +70,7 @@ public:
                     break;
                 case TRANS_TO_RUN:
                     proc -> cpuWaitTime += timeInPrevState;
-                    CALL_SCHEDULER = transitionToRunning(proc); // create event for either preemption or blocking
+                    transitionToRunning(proc); // create event for either preemption or blocking
                     break;
                 case TRANS_TO_BLOCK:
                     transitionToBlock(proc);
@@ -79,6 +80,10 @@ public:
                 case TRANS_TO_PREEMPT:
                     // TODO: add to runqueue (no event is generated)
                     // TODO: Make current_running_process null
+                    CALL_SCHEDULER = true;
+                    break;
+                case TRANS_TO_EXIT:
+                    transitionToExit(proc);
                     CALL_SCHEDULER = true;
                     break;
             }
@@ -105,20 +110,21 @@ public:
         scheduler->addProcess(process); // add to run queue
     }
 
-    bool transitionToRunning(Process* process) {
+    void transitionToRunning(Process* process) {
         // Transition to RUNNING
         int cpuBurstTime = min(rng->random(process->cpuBurst), process->cpuTimeRemaining);
         process -> cpuTimeRemaining -= cpuBurstTime; // Reduce cpuTimeRemaining when the process runs
         if(process -> cpuTimeRemaining > 0) { // Put the process in BLOCKED state only if it's not finished yet
             putEvent(new Event(process, CURRENT_TIME + cpuBurstTime, RUNNING, TRANS_TO_BLOCK, CURRENT_TIME));
-            return false;
         } else {
-            process -> finishTimestamp = CURRENT_TIME + cpuBurstTime;
-            CURRENT_RUNNING_PROCESS = nullptr;
-            cout<<process->finishTimestamp<<" "<<process->pid<<" Done"<<endl;
-            CURRENT_TIME = CURRENT_TIME + cpuBurstTime;
-            return true;
+            putEvent(new Event(process, CURRENT_TIME + cpuBurstTime, RUNNING, TRANS_TO_EXIT, CURRENT_TIME));
         }
+    }
+
+    void transitionToExit(Process* process) {
+        process -> finishTimestamp = CURRENT_TIME;
+        CURRENT_RUNNING_PROCESS = nullptr;
+        cout<<process->finishTimestamp<<" "<<process->pid<<" Done"<<endl;
     }
 
     void transitionToBlock(Process* process) {
