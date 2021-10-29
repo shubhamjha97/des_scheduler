@@ -2,3 +2,8 @@
 cmake-build-debug/
 scheduler
 .DS_Store
+runit.sh
+gradeit.sh
+inputs/*
+outputs/*
+refout/*
