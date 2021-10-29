@@ -47,7 +47,7 @@ int main(int argc, char **argv) {
     BaseScheduler *scheduler = getScheduler(schedSpec[0], quantum, maxPrio);
 
     // Initialize the Discrete Event Simulator
-    DES des = DES(scheduler, rng);
+    DES des = DES(scheduler, rng, quantum);
 
     // Read input file
     vector<Process*> processes = readProcessFile(PROCESS_FILE_PATH, maxPrio, rng);

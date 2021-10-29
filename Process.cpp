@@ -20,4 +20,5 @@ Process::Process(
     this -> finishTimestamp = 0;
     this -> ioTime = 0;
     this -> lastStateTimestamp = arrivalTime;
+    this -> previousRemainingCpuBurst = 0;
 }

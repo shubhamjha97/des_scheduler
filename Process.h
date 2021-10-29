@@ -4,7 +4,7 @@
 class Process {
 public:
     int arrivalTime, totalCpuTime, cpuBurst, ioBurst;
-    int cpuTimeRemaining;
+    int cpuTimeRemaining, previousRemainingCpuBurst;
     int pid;
     int staticPriority, dynamicPriority; // TODO: initialize priority values
     int cpuWaitTime, finishTimestamp, ioTime;

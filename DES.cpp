@@ -18,7 +18,7 @@ private:
         }
     };
 
-    int CURRENT_TIME;
+    int CURRENT_TIME, quantum;
     DesPriorityQueue<Event*> DesQueue;
     BaseScheduler* scheduler;
     RNG* rng;
@@ -29,7 +29,7 @@ public:
         {TRANS_TO_READY, "READY"},
         {TRANS_TO_RUN, "RUNNG"},
         {TRANS_TO_BLOCK, "BLOCK"},
-        {TRANS_TO_PREEMPT, "READY"},
+        {TRANS_TO_PREEMPT, "PRE_READY"},
         {TRANS_TO_EXIT, "EXIT"},
     };
     map<ProcessState, string> DEBUG_STATE_MAP{
@@ -39,9 +39,10 @@ public:
         {BLOCKED, "BLOCK"},
     };
 
-    DES(BaseScheduler* scheduler, RNG* rng) {
+    DES(BaseScheduler* scheduler, RNG* rng, int quantum) {
         this -> scheduler = scheduler;
         this -> rng = rng;
+        this -> quantum = quantum;
         CURRENT_TIME = 0;
         CURRENT_RUNNING_PROCESS = nullptr;
     }
@@ -56,7 +57,12 @@ public:
             CURRENT_TIME = event -> timeStamp;
             timeInPrevState = CURRENT_TIME - proc->lastStateTimestamp;
 
-            printf("%d %d %d: %s -> %s\n", CURRENT_TIME, proc->pid, timeInPrevState, DEBUG_STATE_MAP[event->processCurrState].c_str(), DEBUG_TRANSITION_MAP[event->transition].c_str());
+            if(event -> transition != TRANS_TO_PREEMPT) {
+                printf("%d %d %d: %s -> %s\n", CURRENT_TIME, proc->pid, timeInPrevState,
+                       DEBUG_STATE_MAP[event->processCurrState].c_str(),
+                       DEBUG_TRANSITION_MAP[event->transition].c_str());
+            }
+
             switch(event -> transition) {
                 case TRANS_TO_READY:
                     // must come from BLOCKED or from PREEMPTION
@@ -78,7 +84,8 @@ public:
                     break;
                 case TRANS_TO_PREEMPT:
                     // TODO: add to runqueue (no event is generated)
-                    // TODO: Make current_running_process null
+                    transitionToPreempt(proc);
+                    CURRENT_RUNNING_PROCESS = nullptr;
                     CALL_SCHEDULER = true;
                     break;
                 case TRANS_TO_EXIT:
@@ -105,13 +112,32 @@ public:
         }
     }
 
+    void transitionToPreempt(Process* process) {
+        putEvent(new Event(process, CURRENT_TIME, RUNNING, TRANS_TO_READY, CURRENT_TIME));
+    }
+
     void transitionToReady(Process* process) {
         scheduler->addProcess(process); // add to run queue
     }
 
     void transitionToRunning(Process* process) {
-        // Transition to RUNNING
-        int cpuBurstTime = min(rng->random(process->cpuBurst), process->cpuTimeRemaining);
+        int cpuBurstTime;
+        if(process -> previousRemainingCpuBurst > 0) {
+            cpuBurstTime = process -> previousRemainingCpuBurst;
+            process -> previousRemainingCpuBurst = 0;
+        } else {
+            cpuBurstTime = rng->random(process->cpuBurst);
+        }
+        cpuBurstTime = min(cpuBurstTime, process->cpuTimeRemaining);
+
+        if(quantum < cpuBurstTime) {
+            process -> previousRemainingCpuBurst = cpuBurstTime - quantum;
+            cpuBurstTime = quantum;
+            process -> cpuTimeRemaining -= cpuBurstTime;
+            putEvent(new Event(process, CURRENT_TIME + cpuBurstTime, RUNNING, TRANS_TO_PREEMPT, CURRENT_TIME));
+            return;
+        }
+
         process -> cpuTimeRemaining -= cpuBurstTime; // Reduce cpuTimeRemaining when the process runs
         if(process -> cpuTimeRemaining > 0) { // Put the process in BLOCKED state only if it's not finished yet
             putEvent(new Event(process, CURRENT_TIME + cpuBurstTime, RUNNING, TRANS_TO_BLOCK, CURRENT_TIME));

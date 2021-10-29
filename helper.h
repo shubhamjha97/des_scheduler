@@ -57,9 +57,9 @@ static BaseScheduler* getScheduler(char schedSelector, int quantum, int maxPrio)
             return new LcfsScheduler(DEFAULT_QUANTUM, DEFAULT_MAXPRIO);
         case 'S':
             return new SrtfScheduler(DEFAULT_QUANTUM, maxPrio);
-//        case 'R': // TODO: Uncomment
-//            return new RrScheduler(quantum, maxPrio);
-//        case 'P':
+        case 'R':
+            return new RrScheduler(quantum, maxPrio);
+//        case 'P': // TODO: Uncomment
 //            return new PreScheduler(quantum, maxPrio);
 //        case 'E':
 //            return new PrePrioScheduler(quantum, maxPrio);
@@ -110,7 +110,13 @@ static vector<Process*> readProcessFile(string &processFilePath, int maxPriority
 
 void dumpResultsToConsole(string schedulerName, int timeQuantum, const vector<Process*>& processes) {
     // TODO: output time quantum?
-    cout<<schedulerName<<endl;
+
+    cout<<schedulerName;
+    if(schedulerName=="RR" || schedulerName=="PRIO" || schedulerName=="PREPRIO") {
+        cout<<" "<<timeQuantum;
+    }
+    cout<<endl;
+
     int numProcess = processes.size();
     for(auto process: processes) {
         printf(
