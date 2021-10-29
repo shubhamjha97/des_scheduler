@@ -62,6 +62,7 @@ public:
                     // must come from BLOCKED or from PREEMPTION
                     if(event -> processCurrState == BLOCKED) {
                         proc -> ioTime += timeInPrevState;
+                        proc -> dynamicPriority = (proc -> staticPriority - 1);
                     }
                     transitionToReady(proc);
                     CALL_SCHEDULER = true;
