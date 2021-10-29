@@ -1,30 +1,56 @@
 #include <iostream>
+#include <getopt.h>
 #include "RNG.h"
 #include "helper.h"
 #include "DES.cpp"
 #include "Event.h"
-#include "FcfsScheduler.cpp"
 
 using namespace std;
 
-int main() {
+int main(int argc, char **argv) {
+    int c;
+    bool vflag, tflag, eflag, pflag; // Throw away these flags
+    string schedSpec;
 
-    // TODO: set up getopt
+    while ((c = getopt (argc, argv, "vteps:")) != -1) {
+        switch (c) {
+            case 'v':
+                vflag = 1;
+                break;
+            case 't':
+                tflag = 1;
+                break;
+            case 'e':
+                eflag = 1;
+                break;
+            case 'p':
+                pflag = 1;
+                break;
+            case 's':
+                schedSpec = optarg;
+                break;
+            case '?':
+                printf("Unknown option character: %c", c);
+        }
+    }
+
+    string PROCESS_FILE_PATH =  argv[optind++];
+    string RANDOM_FILE_PATH = argv[optind++];
+
+    int quantum = parseForQuantum(schedSpec);
+    int maxPrio = parseForMaxPrio(schedSpec);
 
     // Initialize the RNG
-    string RANDOM_FILE_PATH = "./rfile";
     RNG *rng = new RNG(RANDOM_FILE_PATH);
 
-    string schedulerName = "FCFS";
-    int timeQuantum = 10000;
-    BaseScheduler *scheduler = new FcfsScheduler();
+    // Get the scheduler depending on the schedSpec
+    BaseScheduler *scheduler = getScheduler(schedSpec[0], quantum, maxPrio);
 
     // Initialize the Discrete Event Simulator
     DES des = DES(scheduler, rng);
 
     // Read input file
-    string PROCESS_FILE_PATH = "/Users/sjha/Downloads/lab2_assign/sample_input";
-    vector<Process*> processes = readProcessFile(PROCESS_FILE_PATH, 4, rng); // TODO: Read maxprio from args
+    vector<Process*> processes = readProcessFile(PROCESS_FILE_PATH, maxPrio, rng);
 
     // Add the loaded processes into the DES
     for(auto process : processes) {
@@ -34,8 +60,7 @@ int main() {
     // Run the simulation
     des.runSimulation();
 
-    // TODO: Calculate and dump results
-    dumpResultsToConsole(schedulerName, timeQuantum, processes);
+    dumpResultsToConsole(scheduler->getSchedulerName(), quantum, processes);
 
     return 0;
 }

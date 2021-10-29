@@ -1,5 +1,6 @@
 #ifndef SCHEDULER_HELPER_H
 #define SCHEDULER_HELPER_H
+
 #include <string>
 #include <vector>
 #include <fstream>
@@ -7,8 +8,63 @@
 #include <sstream>
 #include "Process.h"
 #include "RNG.h"
+#include "BaseScheduler.h"
+#include "FcfsScheduler.h"
+#include "LcfsScheduler.h"
+#include "SrtfScheduler.h"
+#include "RrScheduler.h"
+#include "PreScheduler.h"
+#include "PrePrioScheduler.h"
 
 using namespace std;
+
+enum Schedulers {FCFS, LCFS, SRTF, RR, PRIO, PREPRIO}; // TODO: Maybe remove
+
+int DEFAULT_QUANTUM = 10000;
+int DEFAULT_MAXPRIO = 4;
+
+int parseForQuantum(string schedSpec) {
+    int n = schedSpec.size();
+    string buffer;
+    for(int i=1; i<n; i++) {
+        if(schedSpec[i] == ':') {
+            break;
+        }
+        buffer.push_back(schedSpec[i]);
+    }
+    return buffer.empty() ? DEFAULT_QUANTUM : stoi(buffer);
+}
+
+int parseForMaxPrio(string schedSpec) {
+    int n = schedSpec.size();
+    string buffer;
+    int i=1;
+    while (schedSpec[i] != ':') {
+        i++;
+    }
+    i++;
+    for(; i<n; i++) {
+        buffer.push_back(schedSpec[i]);
+    }
+    return buffer.empty() ? DEFAULT_MAXPRIO : stoi(buffer);
+}
+
+static BaseScheduler* getScheduler(char schedSelector, int quantum, int maxPrio) {
+    switch(schedSelector) {
+        case 'F':
+            return new FcfsScheduler(DEFAULT_QUANTUM, maxPrio);
+//        case 'L': // TODO: Uncomment
+//            return new LcfsScheduler(DEFAULT_QUANTUM, maxPrio);
+//        case 'S':
+//            return new SrtfScheduler(DEFAULT_QUANTUM, maxPrio);
+//        case 'R':
+//            return new RrScheduler(quantum, maxPrio);
+//        case 'P':
+//            return new PreScheduler(quantum, maxPrio);
+//        case 'E':
+//            return new PrePrioScheduler(quantum, maxPrio);
+    }
+}
 
 static vector<Process*> readProcessFile(string &processFilePath, int maxPriority, RNG *rng) {
     vector<Process*> processes;
@@ -53,9 +109,7 @@ static vector<Process*> readProcessFile(string &processFilePath, int maxPriority
 }
 
 void dumpResultsToConsole(string schedulerName, int timeQuantum, const vector<Process*>& processes) {
-    // TODO: Add scheduler info
-    // TODO: use correct number of decimal places
-
+    // TODO: output time quantum?
     cout<<schedulerName<<endl;
     int numProcess = processes.size();
     for(auto process: processes) {
@@ -99,6 +153,5 @@ void dumpResultsToConsole(string schedulerName, int timeQuantum, const vector<Pr
            avgTurnaroundTime,
            avgCpuWaitingTime,
            throughput);
-
 }
 #endif //SCHEDULER_HELPER_H

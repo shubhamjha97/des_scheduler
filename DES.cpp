@@ -9,7 +9,6 @@ class DES {
 private:
     template<typename T> class DesPriorityQueue : public std::priority_queue<T, std::vector<T>, Event::Comparator> {
     public:
-        // TODO: make sure that the priority_queue is stable
         void remove(const T& value) {
             auto it = std::find(this->c.begin(), this->c.end(), value);
             if (it != this->c.end()) {
