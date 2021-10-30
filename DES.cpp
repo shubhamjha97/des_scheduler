@@ -56,9 +56,18 @@ public:
         Event* event;
         int timeInPrevState;
         bool CALL_SCHEDULER = false;
+        int orderIdx = 0;
 
         while( (event = getEvent()) ) {
             Process *proc = event -> process;
+            if(event->transition == TRANS_TO_READY) {
+                if (event->timeStamp != CURRENT_TIME) {
+                    orderIdx = 0;
+                } else {
+                    orderIdx++;
+                }
+                proc -> orderIdx = orderIdx;
+            }
             CURRENT_TIME = event -> timeStamp;
             timeInPrevState = CURRENT_TIME - proc->lastStateTimestamp;
 

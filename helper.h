@@ -91,6 +91,7 @@ static vector<Process*> readProcessFile(string &processFilePath, int maxPriority
 
         int staticPriority = rng -> random(MAX_PRIO);
         int dynamicPriority = staticPriority - 1;
+        int orderIdx = 0;
 
         processes.push_back(
                 new Process(
@@ -100,7 +101,8 @@ static vector<Process*> readProcessFile(string &processFilePath, int maxPriority
                         processParams[2],
                         processParams[3],
                         staticPriority,
-                        dynamicPriority
+                        dynamicPriority,
+                        orderIdx++
                 )
         );
         currentPid++;

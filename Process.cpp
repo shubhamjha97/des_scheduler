@@ -7,7 +7,8 @@ Process::Process(
         int cpuBurst,
         int ioBurst,
         int staticPriority,
-        int dynamicPriority) {
+        int dynamicPriority,
+        int orderIdx) {
     this -> pid = pid;
     this -> arrivalTime = arrivalTime;
     this -> totalCpuTime = totalCpuTime;
@@ -21,4 +22,5 @@ Process::Process(
     this -> ioTime = 0;
     this -> lastStateTimestamp = arrivalTime;
     this -> previousRemainingCpuBurst = 0;
+    this -> orderIdx = orderIdx;
 }

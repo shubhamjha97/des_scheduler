@@ -7,3 +7,4 @@ gradeit.sh
 inputs/*
 outputs/*
 refout/*
+inputs/sample_input
