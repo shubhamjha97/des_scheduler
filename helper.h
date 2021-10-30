@@ -40,7 +40,7 @@ int parseForMaxPrio(string schedSpec) {
     int n = schedSpec.size();
     string buffer;
     int i=1;
-    while (schedSpec[i] != ':') {
+    while (i<n && schedSpec[i] != ':') {
         i++;
     }
     i++;
