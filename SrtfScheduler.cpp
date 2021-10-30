@@ -28,7 +28,10 @@ SrtfScheduler::SrtfScheduler(int quantum, int maxPrio) : BaseScheduler(quantum, 
 
 bool SrtfScheduler::Comparator::operator()(Process *processA, Process *processB) {
     if(processA->cpuTimeRemaining == processB->cpuTimeRemaining) {
-        return processA -> orderIdx > processB -> orderIdx;
+        if(processA->lastStateTimestamp == processB->lastStateTimestamp) {
+            return processA->orderIdx > processB->orderIdx;
+        }
+        return processA->lastStateTimestamp > processB->lastStateTimestamp;
     }
     return processA->cpuTimeRemaining > processB->cpuTimeRemaining;
 }

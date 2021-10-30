@@ -151,6 +151,7 @@ public:
     }
 
     void transitionToReady(Process* process) {
+        process -> lastStateTimestamp = CURRENT_TIME;
         scheduler->addProcess(process); // add to run queue
     }
 
